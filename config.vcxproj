@@ -150,7 +150,23 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="res\haarcascade_frontalface_default.xml" />
+    <Xml Include="res\cas\haarcascade_eye.xml" />
+    <Xml Include="res\cas\haarcascade_eye_tree_eyeglasses.xml" />
+    <Xml Include="res\cas\haarcascade_frontalcatface.xml" />
+    <Xml Include="res\cas\haarcascade_frontalcatface_extended.xml" />
+    <Xml Include="res\cas\haarcascade_frontalface_alt.xml" />
+    <Xml Include="res\cas\haarcascade_frontalface_alt2.xml" />
+    <Xml Include="res\cas\haarcascade_frontalface_alt_tree.xml" />
+    <Xml Include="res\cas\haarcascade_frontalface_default.xml" />
+    <Xml Include="res\cas\haarcascade_fullbody.xml" />
+    <Xml Include="res\cas\haarcascade_lefteye_2splits.xml" />
+    <Xml Include="res\cas\haarcascade_licence_plate_rus_16stages.xml" />
+    <Xml Include="res\cas\haarcascade_lowerbody.xml" />
+    <Xml Include="res\cas\haarcascade_profileface.xml" />
+    <Xml Include="res\cas\haarcascade_righteye_2splits.xml" />
+    <Xml Include="res\cas\haarcascade_russian_plate_number.xml" />
+    <Xml Include="res\cas\haarcascade_smile.xml" />
+    <Xml Include="res\cas\haarcascade_upperbody.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
