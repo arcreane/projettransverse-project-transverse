@@ -90,15 +90,7 @@ void detectAndDraw(Mat& img, CascadeClassifier& cascade, CascadeClassifier& nest
         nestedCascade.detectMultiScale( smallImgROI, nestedObjects, 1.1, 2, 
                                         0|CASCADE_SCALE_IMAGE, Size(30, 30) );  
           
-        // Encercler les yeux 
-        for ( size_t j = 0; j < nestedObjects.size(); j++ )  
-        { 
-            Rect nr = nestedObjects[j]; 
-            center.x = cvRound((r.x + nr.x + nr.width*0.5)*scale); 
-            center.y = cvRound((r.y + nr.y + nr.height*0.5)*scale); 
-            radius = cvRound((nr.width + nr.height)*0.25*scale); 
-            circle( img, center, radius, color2, 3, 8, 0 ); 
-        } 
+
     } 
   
     //Ouverture du résultat 
