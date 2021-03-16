@@ -1,0 +1,41 @@
+# loop over the detections
+for i in range(0, face_detections.shape[2]):
+    # extract confidence
+    confidence = face_detections[0, 0, i, 2]
+
+    # filter detections by confidence greater than the minimum threshold
+    if confidence > 0.5:
+        # get coordinates of the bounding box from
+        box = face_detections[0, 0, i, 3:7] * np.array([width, height, width, height])
+        (x1, y1, x2, y2) = box.astype("int")
+
+        # show original image
+        cv2.imshow("original image", frame)
+
+        # crop to detection and resize
+        resized = crop(
+            frame,
+            torch.Tensor([x1 + (x2 - x1) / 2, y1 + (y2 - y1) / 2]),
+            1.5,
+            tuple(input_size),
+        )
+
+        # convert from BGR to RGB since HRNet expects RGB format
+        resized = cv2.cvtColor(resized, cv2.COLOR_BGR2RGB)
+        img = resized.astype(np.float32) / 255.0
+        # normalize landmark net input
+        normalized_img = (img - mean) / std
+
+        # predict face landmarks
+        model = model.eval()
+        with torch.no_grad():
+            input = torch.Tensor(normalized_img.transpose([2, 0, 1]))
+            input = input.to(device)
+            output = model(input.unsqueeze(0))
+            score_map = output.data.cpu()
+            preds = decode_preds(
+                score_map,
+                [torch.Tensor([x1 + (x2 - x1) / 2, y1 + (y2 - y1) / 2])],
+                [1.5],
+                score_map.shape[2:4],
+            )
