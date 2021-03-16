@@ -1,0 +1,73 @@
+# get chosen landmarks 2-16, 30 as destination points
+    # note that landmarks numbering starts from 0
+    dst_pts = np.array(
+        [
+            landmarks[1],
+            landmarks[2],
+            landmarks[3],
+            landmarks[4],
+            landmarks[5],
+            landmarks[6],
+            landmarks[7],
+            landmarks[8],
+            landmarks[9],
+            landmarks[10],
+            landmarks[11],
+            landmarks[12],
+            landmarks[13],
+            landmarks[14],
+            landmarks[15],
+            landmarks[29],
+        ],
+        dtype="float32",
+    )
+
+    # load mask annotations from csv file to source points
+    mask_annotation = os.path.splitext(os.path.basename(args.mask_image))[0]
+    mask_annotation = os.path.join(
+        os.path.dirname(args.mask_image), mask_annotation + ".csv",
+    )
+
+    with open(mask_annotation) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=",")
+        src_pts = []
+        for i, row in enumerate(csv_reader):
+            # skip head or empty line if it's there
+            try:
+                src_pts.append(np.array([float(row[1]), float(row[2])]))
+            except ValueError:
+                continue
+    src_pts = np.array(src_pts, dtype="float32")
+
+    # overlay with a mask only if all landmarks have positive coordinates:
+    if (landmarks > 0).all():
+        # load mask image
+        mask_img = cv2.imread(args.mask_image, cv2.IMREAD_UNCHANGED)
+        mask_img = mask_img.astype(np.float32)
+        mask_img = mask_img / 255.0
+
+        # get the perspective transformation matrix
+        M, _ = cv2.findHomography(src_pts, dst_pts)
+
+        # transformed masked image
+        transformed_mask = cv2.warpPerspective(
+            mask_img,
+            M,
+            (result.shape[1], result.shape[0]),
+            None,
+            cv2.INTER_LINEAR,
+            cv2.BORDER_CONSTANT,
+        )
+
+        # mask overlay
+        alpha_mask = transformed_mask[:, :, 3]
+        alpha_image = 1.0 - alpha_mask
+
+        for c in range(0, 3):
+            result[:, :, c] = (
+                alpha_mask * transformed_mask[:, :, c]
+                + alpha_image * result[:, :, c]
+            )
+
+# display the resulting frame
+cv2.imshow("image with mask overlay", result)
